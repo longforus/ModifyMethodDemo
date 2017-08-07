@@ -103,7 +103,7 @@ public class Inject {
                 println(method.name)
                 if (method.name.contains("init")){
                     method.insertAfter("com.fec.modifymethoddemo.Printer.print(\"测试插入\",mContext);")
-                    println("插入成功")
+                    println("插入成功")//测试成功的插入代码
                 }
 
             }

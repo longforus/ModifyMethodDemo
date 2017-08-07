@@ -54,7 +54,7 @@ public class PreDexTransform extends Transform {
       input.directoryInputs.each { DirectoryInput directoryInput ->
 
         //TODO 这里可以对input的文件做处理，比如代码注入！
-        Inject.injectDir(directoryInput.file.absolutePath)
+        Inject.injectDir(directoryInput.file.absolutePath)//调用方法进行注入
         // 获取output目录
         def dest = outputProvider.getContentLocation(directoryInput.name,
             directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
@@ -69,10 +69,10 @@ public class PreDexTransform extends Transform {
         String jarPath = jarInput.file.absolutePath;
         String projectName = project.rootProject.name;
         if(jarPath.endsWith("classes.jar")
-            && jarPath.contains("exploded-aar\\"+projectName)
+            && jarPath.contains("exploded-aar\\"+projectName)//这里的路径在我的项目中并不存在, gradle版本不同可能已经不一样了
             // hotpatch module是用来加载dex，无需注入代码
             && !jarPath.contains("exploded-aar\\"+projectName+"\\hotpatch")) {
-          Inject.injectJar(jarPath)
+          Inject.injectJar(jarPath)//调用对jar进行注入的方法
         }
 
 

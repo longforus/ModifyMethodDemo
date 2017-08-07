@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
                 init();
             }
         });
-        mContext = this;
+        mContext = this;//插入的代码无法解析this 所以插入的代码要使用context的话 需要一个成员变量
     }
 
     private void startModify() {

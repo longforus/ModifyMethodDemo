@@ -1,6 +1,6 @@
 import com.longforus.TestPlugin
 apply plugin: 'com.android.application'
-apply plugin: TestPlugin
+apply plugin: TestPlugin//应用插件
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
@@ -24,7 +24,7 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
-    applicationVariants.all { variant->
+    applicationVariants.all { variant->//输出  class文件的保存目录
         def dexTask = project.tasks.findByName("transformClassesWithDexForDebug")
         def preDexTask = project.tasks.findByName("transformClassesWithPreDexForDebug")
         if(preDexTask) {
