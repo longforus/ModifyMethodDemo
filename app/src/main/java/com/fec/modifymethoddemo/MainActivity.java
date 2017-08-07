@@ -1,12 +1,13 @@
 package com.fec.modifymethoddemo;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
-
+    private Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
                 init();
             }
         });
+        mContext = this;
     }
 
     private void startModify() {

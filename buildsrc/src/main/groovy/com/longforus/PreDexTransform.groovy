@@ -4,7 +4,7 @@ import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.utils.FileUtils
 import org.gradle.api.Project
-import org.gradle.internal.impldep.org.apache.commons.codec.digest.DigestUtils
+import org.apache.commons.codec.digest.DigestUtils
 
 public class PreDexTransform extends Transform {
   //        http://blog.csdn.net/u010386612/article/details/51131642
@@ -19,7 +19,7 @@ public class PreDexTransform extends Transform {
   // TransfromClassesWithPreDexForXXXX
   @Override
   String getName() {
-    return "我的dexTransform"
+    return "preDex"
   }
 
   // 指定input的类型
@@ -54,7 +54,7 @@ public class PreDexTransform extends Transform {
       input.directoryInputs.each { DirectoryInput directoryInput ->
 
         //TODO 这里可以对input的文件做处理，比如代码注入！
-
+        Inject.injectDir(directoryInput.file.absolutePath)
         // 获取output目录
         def dest = outputProvider.getContentLocation(directoryInput.name,
             directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
@@ -64,8 +64,18 @@ public class PreDexTransform extends Transform {
       }
 
       input.jarInputs.each { JarInput jarInput ->
-
         //TODO 这里可以对input的文件做处理，比如代码注入！
+
+        String jarPath = jarInput.file.absolutePath;
+        String projectName = project.rootProject.name;
+        if(jarPath.endsWith("classes.jar")
+            && jarPath.contains("exploded-aar\\"+projectName)
+            // hotpatch module是用来加载dex，无需注入代码
+            && !jarPath.contains("exploded-aar\\"+projectName+"\\hotpatch")) {
+          Inject.injectJar(jarPath)
+        }
+
+
         // 重命名输出文件（同目录copyFile会冲突）
         def jarName = jarInput.name
         def md5Name = DigestUtils.md5Hex(jarInput.file.getAbsolutePath())
@@ -73,6 +83,10 @@ public class PreDexTransform extends Transform {
           jarName = jarName.substring(0, jarName.length() - 4)
         }
         def dest = outputProvider.getContentLocation(jarName + md5Name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
+//        project.logger.error("dest = "+dest.absolutePath+"="+dest.exists())
+//        project.logger.error("jarInput.file = "+jarInput.file.absolutePath+"="+jarInput.file.exists())
+        dest.mkdirs()//需要先创建文件才可以哦
+        dest.createNewFile()
         FileUtils.copyFile(jarInput.file, dest)
       }
     }
